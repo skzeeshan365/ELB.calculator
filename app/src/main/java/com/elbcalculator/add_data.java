@@ -50,8 +50,6 @@ public class add_data extends AppCompatActivity implements AdapterView.OnItemSel
         binding.spinner.setAdapter(adapter);
         binding.spinner.setOnItemSelectedListener(this);
 
-
-
         file = getSharedPreferences("file", Activity.MODE_PRIVATE);
 
         binding.button.setOnClickListener(new View.OnClickListener() {
