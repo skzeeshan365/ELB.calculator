@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">ELB calculator</string>
+    <string-array name="numbers">
+        <item>Reading 0-100</item>
+        <item>Reading 100-300</item>
+        <item>Reading 300-500</item>
+        <item>Reading 500></item>
+    </string-array>
+
+    <string name="please_add_charges_data">Please add charges data</string>
+    <string name="save">Save</string>
+    <string name="enter_energy_charges">Enter energy charges</string>
+    <string name="enter_fixed_charges">Enter fixed charges</string>
+    <string name="enter_wheeling_charges">Enter wheeling charges</string>
+    <string name="energy_charges">Energy charges</string>
+    <string name="fixed_charges">Fixed charges</string>
+    <string name="wheeling_charges">Wheeling charges</string>
+</resources>

@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <EditText
+        android:id="@+id/meter_reading"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="15dp"
+        android:background="@drawable/edittext_outline"
+        android:ems="8"
+        android:hint="Enter meter reading"
+        android:inputType="number|text"
+        android:padding="10dp"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="@+id/textView8"
+        app:layout_constraintTop_toBottomOf="@+id/textView8"
+        app:layout_constraintVertical_bias="0.039" />
+
+    <TextView
+        android:id="@+id/energy_charges_txt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="10dp"
+        android:text="Energy Charges"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/meter_reading"
+        app:layout_constraintTop_toBottomOf="@+id/meter_reading"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <TextView
+        android:id="@+id/fixed_charges_txt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="Fixed Charges"
+        android:textSize="16sp"
+        app:layout_constraintStart_toStartOf="@+id/energy_charges_txt"
+        app:layout_constraintTop_toBottomOf="@+id/energy_charges_txt" />
+
+    <TextView
+        android:id="@+id/wheeling_charges_txt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="Wheeling charges"
+        android:textSize="16sp"
+        app:layout_constraintStart_toStartOf="@+id/fixed_charges_txt"
+        app:layout_constraintTop_toBottomOf="@+id/fixed_charges_txt" />
+
+    <TextView
+        android:id="@+id/consumer_charges"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="Consumer charges"
+        android:textSize="16sp"
+        app:layout_constraintStart_toStartOf="@+id/wheeling_charges_txt"
+        app:layout_constraintTop_toBottomOf="@+id/wheeling_charges_txt" />
+
+    <TextView
+        android:id="@+id/govt_ed_chrgs_txt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="Govt ED charges"
+        android:textSize="16sp"
+        app:layout_constraintStart_toStartOf="@+id/consumer_charges"
+        app:layout_constraintTop_toBottomOf="@+id/consumer_charges" />
+
+    <TextView
+        android:id="@+id/govt_tax_txt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="Govt tax"
+        android:textSize="16sp"
+        app:layout_constraintStart_toStartOf="@+id/govt_ed_chrgs_txt"
+        app:layout_constraintTop_toBottomOf="@+id/govt_ed_chrgs_txt" />
+
+    <TextView
+        android:id="@+id/total_txt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="Total bill amount"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="@+id/govt_tax_txt"
+        app:layout_constraintTop_toBottomOf="@+id/govt_tax_txt" />
+
+    <Button
+        android:id="@+id/cal_btn"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:text="Calculate"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/total_txt"
+        app:layout_constraintVertical_bias="0.053" />
+
+    <TextView
+        android:id="@+id/textView8"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="5dp"
+        android:text="Electricity bill calculator"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.042"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.022" />
+
+    <Button
+        android:id="@+id/button2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="EDIT charges"
+        app:layout_constraintEnd_toEndOf="@+id/cal_btn"
+        app:layout_constraintStart_toStartOf="@+id/cal_btn"
+        app:layout_constraintTop_toBottomOf="@+id/cal_btn" />
+</androidx.constraintlayout.widget.ConstraintLayout>
