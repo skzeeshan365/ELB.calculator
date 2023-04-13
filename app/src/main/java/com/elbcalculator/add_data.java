@@ -61,8 +61,9 @@ public class add_data extends AppCompatActivity implements AdapterView.OnItemSel
                     String Energy_chagres = binding.energyCharges.getText().toString();
                     String fixed_charges = binding.fixedCharges.getText().toString();
                     String wheeling_charges = binding.wheelingCharges.getText().toString();
+                    String fac_charges = binding.facCharges2.getText().toString();
 
-                    Db_data datas = new Db_data(Energy_chagres, fixed_charges, wheeling_charges);
+                    Db_data datas = new Db_data(Energy_chagres, fixed_charges, wheeling_charges, fac_charges);
 
                     reference = database.getReference("Charges");
 
@@ -73,8 +74,9 @@ public class add_data extends AppCompatActivity implements AdapterView.OnItemSel
                     String Energy_chagres = binding.energyCharges.getText().toString();
                     String fixed_charges = binding.fixedCharges.getText().toString();
                     String wheeling_charges = binding.wheelingCharges.getText().toString();
+                    String fac_charges = binding.facCharges2.getText().toString();
 
-                    Db_data datas = new Db_data(Energy_chagres, fixed_charges, wheeling_charges);
+                    Db_data datas = new Db_data(Energy_chagres, fixed_charges, wheeling_charges, fac_charges);
 
                     reference = database.getReference("Charges");
 
@@ -85,8 +87,9 @@ public class add_data extends AppCompatActivity implements AdapterView.OnItemSel
                     String Energy_chagres = binding.energyCharges.getText().toString();
                     String fixed_charges = binding.fixedCharges.getText().toString();
                     String wheeling_charges = binding.wheelingCharges.getText().toString();
+                    String fac_charges = binding.facCharges2.getText().toString();
 
-                    Db_data datas = new Db_data(Energy_chagres, fixed_charges, wheeling_charges);
+                    Db_data datas = new Db_data(Energy_chagres, fixed_charges, wheeling_charges, fac_charges);
 
                     reference = database.getReference("Charges");
 
@@ -98,8 +101,9 @@ public class add_data extends AppCompatActivity implements AdapterView.OnItemSel
                     String Energy_chagres = binding.energyCharges.getText().toString();
                     String fixed_charges = binding.fixedCharges.getText().toString();
                     String wheeling_charges = binding.wheelingCharges.getText().toString();
+                    String fac_charges = binding.facCharges2.getText().toString();
 
-                    Db_data datas = new Db_data(Energy_chagres, fixed_charges, wheeling_charges);
+                    Db_data datas = new Db_data(Energy_chagres, fixed_charges, wheeling_charges, fac_charges);
 
                     reference = database.getReference("Charges");
 
@@ -138,10 +142,12 @@ public class add_data extends AppCompatActivity implements AdapterView.OnItemSel
                                     String ec = snapshot.child("energy_charges").getValue(String.class);
                                     String fc = snapshot.child("fixed_charges").getValue(String.class);
                                     String wc = snapshot.child("wheeling_charges").getValue(String.class);
+                                    String fac = snapshot.child("fac_charges").getValue(String.class);
 
                                     binding.energyCharges.setText(ec);
                                     binding.fixedCharges.setText(fc);
                                     binding.wheelingCharges.setText(wc);
+                                    binding.facCharges2.setText(fac);
                                 }
                             }
                         }
@@ -168,10 +174,12 @@ public class add_data extends AppCompatActivity implements AdapterView.OnItemSel
                                     String ec = snapshot.child("energy_charges").getValue(String.class);
                                     String fc = snapshot.child("fixed_charges").getValue(String.class);
                                     String wc = snapshot.child("wheeling_charges").getValue(String.class);
+                                    String fac = snapshot.child("fac_charges").getValue(String.class);
 
                                     binding.energyCharges.setText(ec);
                                     binding.fixedCharges.setText(fc);
                                     binding.wheelingCharges.setText(wc);
+                                    binding.facCharges2.setText(fac);
                                 }
                             }
                         }
@@ -198,10 +206,12 @@ public class add_data extends AppCompatActivity implements AdapterView.OnItemSel
                                     String ec = snapshot.child("energy_charges").getValue(String.class);
                                     String fc = snapshot.child("fixed_charges").getValue(String.class);
                                     String wc = snapshot.child("wheeling_charges").getValue(String.class);
+                                    String fac = snapshot.child("fac_charges").getValue(String.class);
 
                                     binding.energyCharges.setText(ec);
                                     binding.fixedCharges.setText(fc);
                                     binding.wheelingCharges.setText(wc);
+                                    binding.facCharges2.setText(fac);
                                 }
                             }
                         }
@@ -228,10 +238,12 @@ public class add_data extends AppCompatActivity implements AdapterView.OnItemSel
                                     String ec = snapshot.child("energy_charges").getValue(String.class);
                                     String fc = snapshot.child("fixed_charges").getValue(String.class);
                                     String wc = snapshot.child("wheeling_charges").getValue(String.class);
+                                    String fac = snapshot.child("fac_charges").getValue(String.class);
 
                                     binding.energyCharges.setText(ec);
                                     binding.fixedCharges.setText(fc);
                                     binding.wheelingCharges.setText(wc);
+                                    binding.facCharges2.setText(fac);
                                 }
                             }
                         }

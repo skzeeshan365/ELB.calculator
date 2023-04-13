@@ -5,6 +5,7 @@ import static android.content.ContentValues.TAG;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -92,6 +93,7 @@ public class MainActivity extends AppCompatActivity {
 
         binding.energyChargesTxt.setVisibility(View.GONE);
         binding.consumerCharges.setVisibility(View.GONE);
+        binding.facCharges.setVisibility(View.GONE);
         binding.fixedChargesTxt.setVisibility(View.GONE);
         binding.wheelingChargesTxt.setVisibility(View.GONE);
         binding.govtEdChrgsTxt.setVisibility(View.GONE);
@@ -101,22 +103,19 @@ public class MainActivity extends AppCompatActivity {
         int maxLength = 8;
         binding.meterReading.setFilters(new InputFilter[] {new InputFilter.LengthFilter(maxLength)});
 
-        binding.calBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        binding.calBtn.setOnClickListener(v -> {
 
-                    if (binding.meterReading.length() > 0) {
+                if (binding.meterReading.length() > 0) {
 
-                        float reading = Float.valueOf(binding.meterReading.getText().toString().trim());
-                        dialog.show();
-                        TotalBillAmount(reading);
-                        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                        imm.hideSoftInputFromWindow(binding.textView8.getWindowToken(), 0);
+                    float reading = Float.valueOf(binding.meterReading.getText().toString().trim());
+                    dialog.show();
+                    TotalBillAmount(reading);
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(binding.textView8.getWindowToken(), 0);
 
-                    } else {
-                        Toast.makeText(MainActivity.this, "Please enter meter reading", Toast.LENGTH_SHORT).show();
-                    }
-            }
+                } else {
+                    Toast.makeText(MainActivity.this, "Please enter meter reading", Toast.LENGTH_SHORT).show();
+                }
         });
 
         binding.button2.setOnClickListener(new View.OnClickListener() {
@@ -146,9 +145,10 @@ public class MainActivity extends AppCompatActivity {
         database = FirebaseDatabase.getInstance();
         reference = database.getReference("Charges");
 
-        float govtTax = (float) 0.2604, govt_ED = (float) 16;
+        double govtTax = (float) 0.2604, govt_ED = (float) 16;
 
         reference.addValueEventListener(new ValueEventListener() {
+            @SuppressLint("DefaultLocale")
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 for(DataSnapshot snapshot1: snapshot.getChildren()) {
@@ -159,21 +159,28 @@ public class MainActivity extends AppCompatActivity {
                             String ec = snapshot.child("Charge 0-100/energy_charges").getValue(String.class);
                             String fc = snapshot.child("Charge 0-100/fixed_charges").getValue(String.class);
                             String wc = snapshot.child("Charge 0-100/wheeling_charges").getValue(String.class);
+                            String FAC1 = snapshot.child("Charge 0-100/fac_charges").getValue(String.class);
 
-                            float unit_charge100 = Float.parseFloat(ec), fixed_charge100 = Float.parseFloat(fc), wheelingCharge = Float.parseFloat(wc);
+                            double unit_charge100 = Float.parseFloat(ec), fixed_charge100 = Float.parseFloat(fc), wheelingCharge = Float.parseFloat(wc);
 
-                            binding.energyChargesTxt.setText("Energy charges: ".concat(Float.toString(reading*unit_charge100)));
-                            binding.fixedChargesTxt.setText("Fixed charges: ".concat(Float.toString(fixed_charge100)));
-                            float Wheeling_charges = (float) (reading*wheelingCharge);
-                            binding.wheelingChargesTxt.setText("Wheeling charges: ".concat(Float.toString(Wheeling_charges)));
-                            float consumerCharge_sum = (float) (reading*unit_charge100+fixed_charge100+reading*wheelingCharge);
-                            binding.consumerCharges.setText("Consumer charges: ".concat(Float.toString(consumerCharge_sum)));
-                            float GovtED = govt_ED*consumerCharge_sum/100;
-                            float Govt_Tax = (float) (reading*govtTax);
-                            float total_amount = consumerCharge_sum+Govt_Tax+GovtED;
-                            binding.govtTaxTxt.setText("Govt tax: ".concat(Float.toString(Govt_Tax)));
-                            binding.govtEdChrgsTxt.setText("Govt ED charges: ".concat(Float.toString(GovtED)));
-                            binding.totalTxt.setText("Total Amount: ".concat(Float.toString(total_amount)));
+                            double fac1 = Double.parseDouble(FAC1);
+
+                            binding.energyChargesTxt.setText("Energy charges: ".concat(String.format("%.2f", reading*unit_charge100)));
+                            binding.fixedChargesTxt.setText("Fixed charges: ".concat(String.format("%.2f", fixed_charge100)));
+                            double Wheeling_charges = (reading*wheelingCharge);
+                            binding.wheelingChargesTxt.setText("Wheeling charges: ".concat(String.format("%.2f", Wheeling_charges)));
+
+                            double FAC = reading*fac1;
+                            binding.facCharges.setText("FAC charges: ".concat(String.format("%.2f", FAC)));
+
+                            double consumerCharge_sum = (reading*unit_charge100+fixed_charge100+reading*wheelingCharge)+FAC;
+                            binding.consumerCharges.setText("Consumer charges: ".concat(String.format("%.2f", consumerCharge_sum)));
+                            double GovtED = govt_ED*consumerCharge_sum/100;
+                            double Govt_Tax = (reading*govtTax);
+                            double total_amount = consumerCharge_sum+Govt_Tax+GovtED;
+                            binding.govtTaxTxt.setText("Govt tax: ".concat(String.format("%.2f", Govt_Tax)));
+                            binding.govtEdChrgsTxt.setText("Govt ED charges: ".concat(String.format("%.2f", GovtED)));
+                            binding.totalTxt.setText("Total Amount: ".concat(String.format("%.2f", total_amount)));
 
                         } else if(reading>100 && reading<=300) {
 
@@ -181,25 +188,34 @@ public class MainActivity extends AppCompatActivity {
                             String fc = snapshot.child("Charge 100-300/fixed_charges").getValue(String.class);
                             String wc = snapshot.child("Charge 100-300/wheeling_charges").getValue(String.class);
                             String uc100 = snapshot.child("Charge 0-100/energy_charges").getValue(String.class);
+                            String FAC1 = snapshot.child("Charge 0-100/fac_charges").getValue(String.class);
+                            String FAC2 = snapshot.child("Charge 100-300/fac_charges").getValue(String.class);
 
-                            float unit_charge100 = Float.parseFloat(uc100);
-                            float unit_charge1t3 = Float.parseFloat(ec), fixed_charge1t3 = Float.parseFloat(fc), wheelingCharge = Float.parseFloat(wc); //For meter reading 100 to 300
+                            double unit_charge100 = Double.parseDouble(uc100);
+                            double unit_charge1t3 = Double.parseDouble(ec), fixed_charge1t3 = Float.parseFloat(fc), wheelingCharge = Float.parseFloat(wc); //For meter reading 100 to 300
 
-                            float reading_minused = (float) (reading-reading_100);
+                            double fac1 = Double.parseDouble(FAC1);
+                            double fac2 = Double.parseDouble(FAC2);
 
-                            float energy_charges = reading_100*unit_charge100+reading_minused*unit_charge1t3;
-                            binding.energyChargesTxt.setText("Energy charges: ".concat(Float.toString(energy_charges)));
-                            binding.fixedChargesTxt.setText("Fixed charges: ".concat(Float.toString(fixed_charge1t3)));
-                            float Wheeling_charges = (float) (reading*wheelingCharge);
-                            binding.wheelingChargesTxt.setText("Wheeling charges: ".concat(Float.toString(Wheeling_charges)));
-                            float consumerCharge_sum = (float) (energy_charges+fixed_charge1t3+reading*wheelingCharge);
-                            binding.consumerCharges.setText("Consumer charges: ".concat(Float.toString(consumerCharge_sum)));
-                            float GovtED = govt_ED*consumerCharge_sum/100;
-                            float Govt_Tax = (float) (reading*govtTax);
-                            binding.govtTaxTxt.setText("Govt tax: ".concat(Float.toString(Govt_Tax)));
-                            binding.govtEdChrgsTxt.setText("Govt ED charges: ".concat(Float.toString(GovtED)));
-                            float total_amount = consumerCharge_sum+Govt_Tax+GovtED;
-                            binding.totalTxt.setText("Total Amount: ".concat(Float.toString(total_amount)));
+                            double reading_minused = (reading-reading_100);
+
+                            double energy_charges = reading_100*unit_charge100+reading_minused*unit_charge1t3;
+                            binding.energyChargesTxt.setText("Energy charges: ".concat(String.format("%.2f", energy_charges)));
+                            binding.fixedChargesTxt.setText("Fixed charges: ".concat(String.format("%.2f", fixed_charge1t3)));
+                            double Wheeling_charges = (reading*wheelingCharge);
+                            binding.wheelingChargesTxt.setText("Wheeling charges: ".concat(String.format("%.2f", Wheeling_charges)));
+
+                            double FAC = (reading_100*fac1) + (reading_minused*fac2);
+                            binding.facCharges.setText("FAC charges: ".concat(String.format("%.2f", FAC)));
+
+                            double consumerCharge_sum = (energy_charges+fixed_charge1t3+reading*wheelingCharge)+FAC;
+                            binding.consumerCharges.setText("Consumer charges: ".concat(String.format("%.2f", consumerCharge_sum)));
+                            double GovtED = govt_ED*consumerCharge_sum/100;
+                            double Govt_Tax = (reading*govtTax);
+                            binding.govtTaxTxt.setText("Govt tax: ".concat(String.format("%.2f", Govt_Tax)));
+                            binding.govtEdChrgsTxt.setText("Govt ED charges: ".concat(String.format("%.2f", GovtED)));
+                            double total_amount = consumerCharge_sum+Govt_Tax+GovtED;
+                            binding.totalTxt.setText("Total Amount: ".concat(String.format("%.2f", total_amount)));
 
                         } else if(reading>300 && reading<=500) {
 
@@ -208,27 +224,38 @@ public class MainActivity extends AppCompatActivity {
                             String wc = snapshot.child("Charge 300-500/wheeling_charges").getValue(String.class);
                             String uc100 = snapshot.child("Charge 0-100/energy_charges").getValue(String.class);
                             String uc1t3 = snapshot.child("Charge 100-300/energy_charges").getValue(String.class);
+                            String FAC1 = snapshot.child("Charge 0-100/fac_charges").getValue(String.class);
+                            String FAC2 = snapshot.child("Charge 100-300/fac_charges").getValue(String.class);
+                            String FAC3 = snapshot.child("Charge 300-500/fac_charges").getValue(String.class);
 
-                            float unit_charge100 = Float.parseFloat(uc100);
-                            float unit_charge1t3 = Float.parseFloat(uc1t3);
+                            double unit_charge100 = Float.parseFloat(uc100);
+                            double unit_charge1t3 = Float.parseFloat(uc1t3);
 
-                            float unit_charge3t5 = Float.parseFloat(ec), fixed_charge3t5 = Float.parseFloat(fc), wheelingCharge = Float.parseFloat(wc); //For meter reading 300 to 500
+                            double fac1 = Double.parseDouble(FAC1);
+                            double fac2 = Double.parseDouble(FAC2);
+                            double fac3 = Double.parseDouble(FAC3);
 
-                            float reading_minused = (float) (reading-(reading_100+reading_200));
+                            double unit_charge3t5 = Float.parseFloat(ec), fixed_charge3t5 = Float.parseFloat(fc), wheelingCharge = Float.parseFloat(wc); //For meter reading 300 to 500
 
-                            float energy_charges = reading_100*unit_charge100+reading_200*unit_charge1t3+reading_minused*unit_charge3t5;
-                            binding.energyChargesTxt.setText("Energy charges: ".concat(Float.toString(energy_charges)));
-                            binding.fixedChargesTxt.setText("Fixed charges: ".concat(Float.toString(fixed_charge3t5)));
-                            float Wheeling_charges = (float) (reading*wheelingCharge);
-                            binding.wheelingChargesTxt.setText("Wheeling charges: ".concat(Float.toString(Wheeling_charges)));
-                            float consumerCharge_sum = (float) (energy_charges+fixed_charge3t5+reading*wheelingCharge);
-                            binding.consumerCharges.setText("Consumer charges: ".concat(Float.toString(consumerCharge_sum)));
-                            float GovtED = govt_ED*consumerCharge_sum/100;
-                            float Govt_Tax = (float) (reading*govtTax);
-                            binding.govtTaxTxt.setText("Govt tax: ".concat(Float.toString(Govt_Tax)));
-                            binding.govtEdChrgsTxt.setText("Govt ED charges: ".concat(Float.toString(GovtED)));
-                            float total_amount = consumerCharge_sum+Govt_Tax+GovtED;
-                            binding.totalTxt.setText("Total Amount: ".concat(Float.toString(total_amount)));
+                            double reading_minused = (reading-(reading_100+reading_200));
+
+                            double energy_charges = reading_100*unit_charge100+reading_200*unit_charge1t3+reading_minused*unit_charge3t5;
+                            binding.energyChargesTxt.setText("Energy charges: ".concat(String.format("%.2f", energy_charges)));
+                            binding.fixedChargesTxt.setText("Fixed charges: ".concat(String.format("%.2f", fixed_charge3t5)));
+                            double Wheeling_charges = (reading*wheelingCharge);
+                            binding.wheelingChargesTxt.setText("Wheeling charges: ".concat(String.format("%.2f", Wheeling_charges)));
+
+                            double FAC = (reading_100*fac1) + (reading_200*fac2) + (reading_minused*fac3);
+                            binding.facCharges.setText("FAC charges: ".concat(String.format("%.2f", FAC)));
+
+                            double consumerCharge_sum = (energy_charges+fixed_charge3t5+reading*wheelingCharge)+FAC;
+                            binding.consumerCharges.setText("Consumer charges: ".concat(String.format("%.2f", consumerCharge_sum)));
+                            double GovtED = govt_ED*consumerCharge_sum/100;
+                            double Govt_Tax = (reading*govtTax);
+                            binding.govtTaxTxt.setText("Govt tax: ".concat(String.format("%.2f", Govt_Tax)));
+                            binding.govtEdChrgsTxt.setText("Govt ED charges: ".concat(String.format("%.2f", GovtED)));
+                            double total_amount = consumerCharge_sum+Govt_Tax+GovtED;
+                            binding.totalTxt.setText("Total Amount: ".concat(String.format("%.2f", total_amount)));
 
                         } else if(reading>500) {
 
@@ -238,28 +265,42 @@ public class MainActivity extends AppCompatActivity {
                             String uc100 = snapshot.child("Charge 0-100/energy_charges").getValue(String.class);
                             String uc1t3 = snapshot.child("Charge 100-300/energy_charges").getValue(String.class);
                             String uc3t5 = snapshot.child("Charge 100-300/energy_charges").getValue(String.class);
+                            String FAC1 = snapshot.child("Charge 0-100/fac_charges").getValue(String.class);
+                            String FAC2 = snapshot.child("Charge 100-300/fac_charges").getValue(String.class);
+                            String FAC3 = snapshot.child("Charge 300-500/fac_charges").getValue(String.class);
+                            String FAC4 = snapshot.child("Charge 500>/fac_charges").getValue(String.class);
 
-                            float unit_charge100 = Float.parseFloat(uc100);
-                            float unit_charge1t3 = Float.parseFloat(uc1t3);
-                            float unit_charge3t5 = Float.parseFloat(uc3t5);
+                            double unit_charge100 = Float.parseFloat(uc100);
+                            double unit_charge1t3 = Float.parseFloat(uc1t3);
+                            double unit_charge3t5 = Float.parseFloat(uc3t5);
 
-                            float unit_charge5 = Float.parseFloat(ec), fixed_charge5 = Float.parseFloat(fc), wheelingCharge = Float.parseFloat(wc); //For meter reading above 500
+                            double fac1 = Double.parseDouble(FAC1);
+                            double fac2 = Double.parseDouble(FAC2);
+                            double fac3 = Double.parseDouble(FAC3);
+                            double fac4 = Double.parseDouble(FAC4);
 
-                            float reading_minused = (float) (reading-(reading_100+reading_200+reading_200));
+                            double unit_charge5 = Float.parseFloat(ec), fixed_charge5 = Float.parseFloat(fc), wheelingCharge = Float.parseFloat(wc); //For meter reading above 500
 
-                            float energy_charges = reading_100*unit_charge100+reading_200*unit_charge1t3+reading_200*unit_charge3t5+reading_minused*unit_charge5;
-                            binding.energyChargesTxt.setText("Energy charges: ".concat(Float.toString(energy_charges)));
-                            binding.fixedChargesTxt.setText("Fixed charges: ".concat(Float.toString(fixed_charge5)));
-                            float Wheeling_charges = (float) (reading*wheelingCharge);
-                            binding.wheelingChargesTxt.setText("Wheeling charges: ".concat(Float.toString(Wheeling_charges)));
-                            float consumerCharge_sum = (float) (energy_charges+fixed_charge5+reading*wheelingCharge);
-                            binding.consumerCharges.setText("Consumer charges: ".concat(Float.toString(consumerCharge_sum)));
-                            float GovtED = govt_ED*consumerCharge_sum/100;
-                            float Govt_Tax = (float) (reading*govtTax);
-                            binding.govtTaxTxt.setText("Govt tax: ".concat(Float.toString(Govt_Tax)));
-                            binding.govtEdChrgsTxt.setText("Govt ED charges: ".concat(Float.toString(GovtED)));
-                            float total_amount = consumerCharge_sum+Govt_Tax+GovtED;
-                            binding.totalTxt.setText("Total Amount: ".concat(Float.toString(total_amount)));
+                            double reading_minused = (reading-(reading_100+reading_200+reading_200));
+
+                            double energy_charges = reading_100*unit_charge100+reading_200*unit_charge1t3+reading_200*unit_charge3t5+reading_minused*unit_charge5;
+                            binding.energyChargesTxt.setText("Energy charges: ".concat(String.format("%.2f", energy_charges)));
+                            binding.fixedChargesTxt.setText("Fixed charges: ".concat(String.format("%.2f", fixed_charge5)));
+                            double Wheeling_charges = (reading*wheelingCharge);
+                            binding.wheelingChargesTxt.setText("Wheeling charges: ".concat(String.format("%.2f", Wheeling_charges)));
+
+                            double FAC = (reading_100*fac1) + (reading_200*fac2) + (reading_200*fac3) + (reading_minused*fac4);
+                            binding.facCharges.setText("FAC charges: ".concat(String.format("%.2f", FAC)));
+
+                            double consumerCharge_sum = (energy_charges+fixed_charge5+reading*wheelingCharge)+FAC;
+                            binding.consumerCharges.setText("Consumer charges: ".concat(String.format("%.2f", consumerCharge_sum)));
+                            double GovtED = govt_ED*consumerCharge_sum/100;
+                            double Govt_Tax = (reading*govtTax);
+                            binding.govtTaxTxt.setText("Govt tax: ".concat(String.format("%.2f", Govt_Tax)));
+                            binding.govtEdChrgsTxt.setText("Govt ED charges: ".concat(String.format("%.2f", GovtED)));
+                            double total_amount = consumerCharge_sum+Govt_Tax+GovtED;
+
+                            binding.totalTxt.setText("Total Amount: ".concat(String.format("%.2f", total_amount)));
                         }
 
                     }
@@ -282,6 +323,7 @@ public class MainActivity extends AppCompatActivity {
                     dialog.dismiss();
                     binding.energyChargesTxt.setVisibility(View.VISIBLE);
                     binding.consumerCharges.setVisibility(View.VISIBLE);
+                    binding.facCharges.setVisibility(View.VISIBLE);
                     binding.fixedChargesTxt.setVisibility(View.VISIBLE);
                     binding.wheelingChargesTxt.setVisibility(View.VISIBLE);
                     binding.govtEdChrgsTxt.setVisibility(View.VISIBLE);
